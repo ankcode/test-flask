@@ -44,7 +44,50 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.firstname
 
+class Questions(db.Model):
+    __tablename__ = 'questions'
+    quiz_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    quizasked = db.Column(db.Text)
+    quizstatus = db.Column(db.Integer)
+    answer_id = db.Column(db.Integer, unique=True)
 
+    def __repr__(self):
+        return '<Questions %r>' % self.quizasked
+
+class Answers(db.Model):
+    __tablename__ = 'answers'
+    answer_id = db.Column(db.Integer, primary_key=True)
+    quiz_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
+    quizanswer = db.Column(db.Text)
+    date_added = db.Column(db.DateTime)
+    votes_up = db.Column(db.Integer)
+    votes_down = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Answers %r>' % self.quizanswer
+
+class Edits(db.Model):
+    __tablename__ = 'edits'
+    edit_id = db.Column(db.Integer, primary_key=True)
+    answer_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
+    quizedit = db.Column(db.Text)
+    date_edited = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Edits %r>' % self.quizedit
+
+class Login(db.Model):
+    __tablename__ = 'logins'
+    login_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    logintime = db.Column(db.DateTime)
+    logouttime = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Login %r>' % self.login_id
 
 
 class SignupForm(FlaskForm):
