@@ -116,18 +116,20 @@ def signup():
     # userPassword = None
     form = SignupForm()
     if form.validate_on_submit():
-        useravailable = User.query.filter_by(userEmail=form.userEmail.data).first()
+        useravailable = User.query.filter_by(email=form.userEmail.data).first()
         if useravailable is None:
-            useravailable = User(userEmail=form.userEmail.data)
-            firstname = User(firstName=form.firstName.data)
-            lastname = User(lastName=form.lastName.data)
-            username = User(userName=form.userName.data)
-            userpassword = User(userPassword=form.userPassword.data)
+            useravailable = User(email=form.userEmail.data)
+            firstname = User(firstname=form.firstName.data)
+            lastname = User(lastname=form.lastName.data)
+            username = User(username=form.userName.data)
+            userpassword = User(userpassword=form.userPassword.data)
             db.session.add_all([useravailable, firstname, lastname, username, userpassword])
             db.session.commit()
             session['known'] = False
+            flash('Sign Up Successful')
         else:
             session['known'] = True
+            flash('You have already signed up')
         session['firstName'] = form.firstName.data
         session['lastName'] = form.lastName.data
         session['userName'] = form.userName.data
