@@ -1,15 +1,51 @@
-from flask import Flask, render_template, session, redirect, url_for
+import os
+from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, Optional
+from flask_sqlalchemy import SQLAlchemy
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0F1CA775123C57D11D66C856DB9807D7453102968CF0F1E2B546056A696D49BC'
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
+
+class Role(db.model):
+    __tablename__ = 'roles'
+    role_id = db.Column(db.Integer, primary_key=True)
+    rolename = db.Column(db.String(20), unique=True)
+    users = db.relationship('User', backref='role', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Role %r>' % self.rolename
+
+class User(db.model):
+    __tablename__ = 'users'
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(15), unique=True)
+    firstname = db.Column(db.String(20), unique=False)
+    lastname = db.Column(db.String(20), unique=False)
+    email = db.Column(db.String(60), unique=True)
+    userpassword = db.Column(db.Text)
+    datecreated = db.Column(db.DateTime)
+    lastlogin = db.Column(db.DateTime)
+    lastlogout = db.Column(db.DateTime)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.role_id'))
+
+    def __repr__(self):
+        return '<User %r>' % self.firstname
+
+
+
 
 class SignupForm(FlaskForm):
     firstName = StringField('First Name:', validators=[DataRequired()])
