@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
@@ -30,24 +30,25 @@ def signin():
 
 @app.route('/signup', methods=['GET','POST'])
 def signup():
-    firstName = None
-    lastName = None
-    userName = None
-    userEmail = None
-    userPassword = None
+    # firstName = None
+    # lastName = None
+    # userName = None
+    # userEmail = None
+    # userPassword = None
     form = SignupForm()
     if form.validate_on_submit():
-        firstName = form.firstName.data
-        lastName = form.lastName.data
-        userName = form.userName.data
-        userEmail = form.userEmail.data
-        userPassword = form.userPassword.data
-        form.firstName.data = ''
-        form.lastName.data = ''
-        form.userEmail.data = ''
-        form.userName.data = ''
-        form.userPassword.data = ''
-    return render_template('signup.html', form=form, firstName=firstName, lastName=lastName, userName=userName, userEmail=userEmail, userPassword=userPassword)
+        session['firstName'] = form.firstName.data
+        session['lastName'] = form.lastName.data
+        session['userName'] = form.userName.data
+        session['userEmail'] = form.userEmail.data
+        session['userPassword'] = form.userPassword.data
+        # form.firstName.data = ''
+        # form.lastName.data = ''
+        # form.userEmail.data = ''
+        # form.userName.data = ''
+        # form.userPassword.data = ''
+        return redirect(url_for('signup'))
+    return render_template('signup.html', form=form, firstName=session.get('firstName'), lastName=session.get('lastName'), userName=session.get('userName'), userEmail=session.get('userEmail'), userPassword=session.get('userPassword'))
     
 @app.errorhandler(404)
 def page_not_found(e):
